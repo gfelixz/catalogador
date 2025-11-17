@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="/static/style.css">
+    <title>MetaFlix</title>
+</head>
+<body>
+
+<div class="header">MetaFlix – Filmes & Séries</div>
+
+<div class="container">
+
+    <a href="/add"><button>Adicionar Novo</button></a>
+
+    {% for m in medias %}
+    <div class="card">
+        <h2>{{ m.titulo }} ({{ m.tipo }})</h2>
+        <p><strong>Nota:</strong> {{ m.nota }}</p>
+        <a href="/details/{{ m.id }}">Ver detalhes</a>
+    </div>
+    {% endfor %}
+
+</div>
+
+</body>
+</html>
