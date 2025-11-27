@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+
+{% block title %}Início - RankFlow{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero {
+      
+        background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+        padding: 3rem 2rem;
+        border-radius: 12px;
+        margin-bottom: 3rem;
+        text-align: center;
+    }
+    
+    .hero h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+       
+        color: #fff;
+    }
+    
+    .hero p {
+        font-size: 1.2rem;
+        color: #e0e7ff;
+    }
+    
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+    
+    .product-card {
+        background: #1a1f26;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: transform 0.3s;
+        border: 1px solid #2a3240;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-5px);
+       
+        border-color: #2563eb;
+    }
+    
+    .product-card-content {
+        padding: 1.5rem;
+    }
+    
+    .product-title {
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+        color: #e4e6eb;
+    }
+    
+    .product-meta {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .badge {
+        padding: 0.3rem 0.6rem;
+        background: #2a3240;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        color: #b0b3b8;
+    }
+    
+    .scores {
+        display: flex;
+        gap: 1.5rem;
+        align-items: center;
+        margin-top: 1rem;
+    }
+    
+    .score-item {
+        text-align: center;
+    }
+    
+    .score-label {
+        font-size: 0.75rem;
+        color: #b0b3b8;
+        margin-bottom: 0.3rem;
+    }
+    
+    .user-score {
+        background: #2a3240;
+        
+        color: #60a5fa;
+        padding: 0.4rem 0.6rem;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #b0b3b8;
+    }
+    
+    .empty-state h2 {
+        margin-bottom: 1rem;
+        color: #e4e6eb;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero">
+   
+    <h1>RankFlow - Avaliações de Filmes e Séries</h1>
+    <p>Descubra as melhores avaliações de filmes e séries de TV</p>
+</div>
+
+{% if products %}
+    <h2 style="margin-bottom: 1rem; font-size: 1.8rem;">Destaques</h2>
+    <div class="products-grid">
+        {% for product in products %}
+        <a href="{{ url_for('product_detail', product_id=product.id) }}" style="text-decoration: none; color: inherit;">
+            <div class="product-card">
+                <div class="product-card-content">
+                    <h3 class="product-title">{{ product.title }}</h3>
+                    <div class="product-meta">
+                       
+                        <span class="badge">{{ 'FILME' if product.category == 'movie' else 'SÉRIE' }}</span>
+                        <span class="badge">{{ product.release_date }}</span>
+                    </div>
+                    
+                    <div class="scores">
+                        <div class="score-item">
+                            <div class="score-label">METASCORE</div>
+                            {% if product.metascore %}
+                                <span class="metascore {% if product.metascore >= 75 %}metascore-high{% elif product.metascore >= 50 %}metascore-medium{% else %}metascore-low{% endif %}">
+                                    {{ product.metascore|int }}
+                                </span>
+                            {% else %}
+                                <span class="metascore" style="background: #2a3240; color: #666;">TBD</span>
+                            {% endif %}
+                            <div class="score-label" style="margin-top: 0.3rem;">{{ product.critic_count }} críticos</div>
+                        </div>
+                        
+                        <div class="score-item">
+                            <div class="score-label">USUÁRIOS</div>
+                            {% if product.user_score %}
+                                <span class="user-score">{{ product.user_score }}</span>
+                            {% else %}
+                                <span class="user-score" style="background: #2a3240; color: #666;">TBD</span>
+                            {% endif %}
+                            <div class="score-label" style="margin-top: 0.3rem;">{{ product.user_count }} avaliações</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <h2>Nenhum produto cadastrado ainda</h2>
+        <p>Comece adicionando seu primeiro filme ou série!</p>
+        <a href="{{ url_for('add_product') }}" class="btn btn-primary" style="margin-top: 1rem;">Adicionar</a>
+    </div>
+{% endif %}
+{% endblock %}

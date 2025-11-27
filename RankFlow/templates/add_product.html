@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+
+{% block title %}Adicionar - RankFlow{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: #1a1f26;
+        padding: 2rem;
+        border-radius: 12px;
+    }
+    
+    .form-container h1 {
+        margin-bottom: 2rem;
+        color: #e4e6eb;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #b0b3b8;
+        font-weight: 500;
+    }
+    
+    input, select, textarea {
+        width: 100%;
+        padding: 0.8rem;
+        background: #0f1419;
+        border: 1px solid #2a3240;
+        border-radius: 6px;
+        color: #e4e6eb;
+        font-size: 1rem;
+        font-family: inherit;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+        outline: none;
+        
+        border-color: #2563eb;
+    }
+    
+    textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    
+    <h1>Adicionar Filme ou Série</h1>
+    
+    <form method="POST">
+        <div class="form-group">
+            <label for="title">Título *</label>
+            <input type="text" id="title" name="title" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="category">Categoria *</label>
+            <select id="category" name="category" required>
+                <option value="">Selecione...</option>
+                <option value="movie">Filme</option>
+                <option value="tv">Série de TV</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="release_date">Data de Lançamento *</label>
+            <input type="date" id="release_date" name="release_date" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="developer">Diretor/Estúdio</label>
+            <input type="text" id="developer" name="developer" placeholder="Ex: Christopher Nolan, HBO, etc">
+        </div>
+        
+        <div class="form-group">
+            <label for="description">Descrição</label>
+            <textarea id="description" name="description" placeholder="Descreva o filme ou série..."></textarea>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Adicionar</button>
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

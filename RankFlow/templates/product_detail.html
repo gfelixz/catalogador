@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.title }} - MetaCritic Clone{% endblock %}
+
+{% block extra_css %}
+<style>
+    .product-header {
+        background: #1a1f26;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+    }
+    
+    .product-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: #e4e6eb;
+    }
+    
+    .product-info {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .info-item {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .info-label {
+        font-size: 0.85rem;
+        color: #b0b3b8;
+        margin-bottom: 0.3rem;
+    }
+    
+    .info-value {
+        font-size: 1.1rem;
+        color: #e4e6eb;
+        font-weight: 500;
+    }
+    
+    .scores-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+    
+    .score-card {
+        background: #1a1f26;
+        padding: 2rem;
+        border-radius: 12px;
+        text-align: center;
+    }
+    
+    .score-card h3 {
+        font-size: 0.9rem;
+        color: #b0b3b8;
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .big-score {
+        font-size: 4rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+    
+    .reviews-section {
+        margin-top: 3rem;
+    }
+    
+    .reviews-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .reviews-header h2 {
+        font-size: 1.8rem;
+        color: #e4e6eb;
+    }
+    
+    .review-card {
+        background: #1a1f26;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        border-left: 4px solid #00ce7a;
+    }
+    
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .reviewer-name {
+        font-weight: bold;
+        font-size: 1.1rem;
+        color: #e4e6eb;
+    }
+    
+    .review-comment {
+        color: #b0b3b8;
+        line-height: 1.6;
+    }
+    
+    .no-reviews {
+        text-align: center;
+        padding: 3rem;
+        background: #1a1f26;
+        border-radius: 12px;
+        color: #b0b3b8;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="product-header">
+    <h1>{{ product.title }}</h1>
+    <div class="product-info">
+        <div class="info-item">
+            <span class="info-label">Categoria</span>
+            <span class="info-value">{{ product.category|upper }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Lançamento</span>
+            <span class="info-value">{{ product.release_date }}</span>
+        </div>
+        {% if product.developer %}
+        <div class="info-item">
+            <span class="info-label">Desenvolvedor/Estúdio</span>
+            <span class="info-value">{{ product.developer }}</span>
+        </div>
+        {% endif %}
+    </div>
+    {% if product.description %}
+    <p style="color: #b0b3b8; margin-top: 1rem;">{{ product.description }}</p>
+    {% endif %}
+</div>
+
+<div class="scores-section">
+    <div class="score-card">
+        <h3>Metascore</h3>
+        {% if product.metascore %}
+            <div class="big-score metascore {% if product.metascore >= 75 %}metascore-high{% elif product.metascore >= 50 %}metascore-medium{% else %}metascore-low{% endif %}">
+                {{ product.metascore|int }}
+            </div>
+            <p style="color: #b0b3b8;">Baseado em {{ critic_reviews|length }} avaliações de críticos</p>
+        {% else %}
+            <div class="big-score" style="color: #666;">TBD</div>
+            <p style="color: #666;">Nenhuma avaliação ainda</p>
+        {% endif %}
+    </div>
+    
+    <div class="score-card">
+        <h3>Pontuação dos Usuários</h3>
+        {% if product.user_score %}
+            <div class="big-score" style="color: #00ce7a;">{{ product.user_score }}</div>
+            <p style="color: #b0b3b8;">Baseado em {{ user_reviews|length }} avaliações de usuários</p>
+        {% else %}
+            <div class="big-score" style="color: #666;">TBD</div>
+            <p style="color: #666;">Nenhuma avaliação ainda</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="reviews-section">
+    <div class="reviews-header">
+        <h2>Avaliações de Críticos</h2>
+        <a href="{{ url_for('add_review', product_id=product.id) }}" class="btn btn-primary">+ Adicionar Avaliação</a>
+    </div>
+    
+    {% if critic_reviews %}
+        {% for review in critic_reviews %}
+        <div class="review-card">
+            <div class="review-header">
+                <span class="reviewer-name">{{ review.reviewer }}</span>
+                <span class="metascore {% if review.score >= 75 %}metascore-high{% elif review.score >= 50 %}metascore-medium{% else %}metascore-low{% endif %}">
+                    {{ review.score|int }}
+                </span>
+            </div>
+            {% if review.comment %}
+            <p class="review-comment">{{ review.comment }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="no-reviews">
+            <p>Nenhuma avaliação de crítico ainda. Seja o primeiro!</p>
+        </div>
+    {% endif %}
+</div>
+
+<div class="reviews-section">
+    <div class="reviews-header">
+        <h2>Avaliações de Usuários</h2>
+    </div>
+    
+    {% if user_reviews %}
+        {% for review in user_reviews %}
+        <div class="review-card" style="border-left-color: #2a3240;">
+            <div class="review-header">
+                <span class="reviewer-name">{{ review.reviewer }}</span>
+                <span class="user-score">{{ review.score }}</span>
+            </div>
+            {% if review.comment %}
+            <p class="review-comment">{{ review.comment }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="no-reviews">
+            <p>Nenhuma avaliação de usuário ainda. Seja o primeiro!</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

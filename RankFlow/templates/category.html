@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}{{ category|upper }} - MetaCritic Clone{% endblock %}
+
+{% block extra_css %}
+<style>
+    .category-header {
+        margin-bottom: 2rem;
+    }
+    
+    .category-header h1 {
+        font-size: 2.5rem;
+        color: #00ce7a;
+        margin-bottom: 0.5rem;
+    }
+    
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+    
+    .product-card {
+        background: #1a1f26;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: transform 0.3s;
+        border: 1px solid #2a3240;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-5px);
+        border-color: #00ce7a;
+    }
+    
+    .product-card-content {
+        padding: 1.5rem;
+    }
+    
+    .product-title {
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+        color: #e4e6eb;
+    }
+    
+    .product-meta {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .badge {
+        padding: 0.3rem 0.6rem;
+        background: #2a3240;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        color: #b0b3b8;
+    }
+    
+    .scores {
+        display: flex;
+        gap: 1.5rem;
+        align-items: center;
+        margin-top: 1rem;
+    }
+    
+    .score-item {
+        text-align: center;
+    }
+    
+    .score-label {
+        font-size: 0.75rem;
+        color: #b0b3b8;
+        margin-bottom: 0.3rem;
+    }
+    
+    .user-score {
+        background: #2a3240;
+        color: #00ce7a;
+        padding: 0.4rem 0.6rem;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: #1a1f26;
+        border-radius: 12px;
+        color: #b0b3b8;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="category-header">
+    <h1>
+        {% if category == 'game' %}Jogos
+        {% elif category == 'movie' %}Filmes
+        {% elif category == 'tv' %}Séries de TV
+        {% elif category == 'music' %}Música
+        {% else %}{{ category|upper }}
+        {% endif %}
+    </h1>
+    <p style="color: #b0b3b8;">{{ products|length }} produto(s) encontrado(s)</p>
+</div>
+
+{% if products %}
+    <div class="products-grid">
+        {% for product in products %}
+        <a href="{{ url_for('product_detail', product_id=product.id) }}" style="text-decoration: none; color: inherit;">
+            <div class="product-card">
+                <div class="product-card-content">
+                    <h3 class="product-title">{{ product.title }}</h3>
+                    <div class="product-meta">
+                        <span class="badge">{{ product.release_date }}</span>
+                    </div>
+                    
+                    <div class="scores">
+                        <div class="score-item">
+                            <div class="score-label">METASCORE</div>
+                            {% if product.metascore %}
+                                <span class="metascore {% if product.metascore >= 75 %}metascore-high{% elif product.metascore >= 50 %}metascore-medium{% else %}metascore-low{% endif %}">
+                                    {{ product.metascore|int }}
+                                </span>
+                            {% else %}
+                                <span class="metascore" style="background: #2a3240; color: #666;">TBD</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="score-item">
+                            <div class="score-label">USUÁRIOS</div>
+                            {% if product.user_score %}
+                                <span class="user-score">{{ product.user_score }}</span>
+                            {% else %}
+                                <span class="user-score" style="background: #2a3240; color: #666;">TBD</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <h2>Nenhum produto nesta categoria ainda</h2>
+        <p>Seja o primeiro a adicionar!</p>
+        <a href="{{ url_for('add_product') }}" class="btn btn-primary" style="margin-top: 1rem;">Adicionar Produto</a>
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Adicionar Avaliação - {{ product.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: #1a1f26;
+        padding: 2rem;
+        border-radius: 12px;
+    }
+    
+    .form-container h1 {
+        margin-bottom: 0.5rem;
+        color: #e4e6eb;
+        font-size: 1.8rem;
+    }
+    
+    .product-subtitle {
+        color: #b0b3b8;
+        margin-bottom: 2rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #b0b3b8;
+        font-weight: 500;
+    }
+    
+    input, select, textarea {
+        width: 100%;
+        padding: 0.8rem;
+        background: #0f1419;
+        border: 1px solid #2a3240;
+        border-radius: 6px;
+        color: #e4e6eb;
+        font-size: 1rem;
+        font-family: inherit;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: #00ce7a;
+    }
+    
+    textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+    
+    .hint {
+        font-size: 0.85rem;
+        color: #b0b3b8;
+        margin-top: 0.3rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h1>Adicionar Avaliação</h1>
+    <p class="product-subtitle">{{ product.title }}</p>
+    
+    <form method="POST">
+        <div class="form-group">
+            <label for="type">Tipo de Avaliação *</label>
+            <select id="type" name="type" required>
+                <option value="critic">Crítico</option>
+                <option value="user">Usuário</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="reviewer">Nome do Avaliador *</label>
+            <input type="text" id="reviewer" name="reviewer" required placeholder="Ex: IGN, GameSpot, ou seu nome">
+        </div>
+        
+        <div class="form-group">
+            <label for="score">Pontuação *</label>
+            <input type="number" id="score" name="score" min="0" max="100" step="0.1" required placeholder="0-100">
+            <p class="hint">Digite um valor entre 0 e 100</p>
+        </div>
+        
+        <div class="form-group">
+            <label for="comment">Comentário</label>
+            <textarea id="comment" name="comment" placeholder="Escreva sua opinião sobre o produto..."></textarea>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Publicar Avaliação</button>
+            <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
